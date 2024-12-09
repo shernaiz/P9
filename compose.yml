@@ -1,0 +1,33 @@
+services:
+  apache:
+    image: php:7.4-apache
+    container_name: apache_container
+    ports:
+      - "8000:8000"
+    networks:
+      p9_subnet:
+        ipv4_address: 10.1.0.2
+    volumes:
+    - ./www:/var/www
+    - ./confApache:/etc/apache2
+
+  bind9:
+    image: internetsystemsconsortium/bind9:9.20
+    container_name: bind_DNS
+    ports:
+      - 54:53
+    networks:
+      p9_subnet:
+        ipv4_address: 10.1.0.254
+    volumes:
+      - ./confDNS/conf:/etc/bind
+      - ./confDNS/zonas:/var/lib/bind
+
+networks:
+  p9_subnet:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.1.0.0/16
+        gateway: 10.1.0.1
